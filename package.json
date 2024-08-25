@@ -53,7 +53,7 @@
     "eslint-plugin-sonarjs": "^1.0.0",
     "globals": "^15.1.0",
     "husky": "^9.0.0",
-    "jsdom": "^24.0.0",
+    "jsdom": "^25.0.0",
     "optionator": "^0.9.4",
     "postcss": "^8.4.33",
     "prettier": "^3.2.4",
