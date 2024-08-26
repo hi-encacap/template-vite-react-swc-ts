@@ -35,20 +35,20 @@ const login = async (credentials: ILoginFormData) => {
   return user;
 };
 
-const logout = async (): Promise<void> => {
-  return removeTokens();
+const logout = () => {
+  removeTokens();
 };
 
 const getAuthToken = () => {
   const cookieStore = new Cookies();
 
-  return cookieStore.get("token");
+  return cookieStore.get<string>("token");
 };
 
 const getRefreshToken = () => {
   const cookieStore = new Cookies();
 
-  return cookieStore.get("refresh_token");
+  return cookieStore.get<string>("refresh_token");
 };
 
 const getTokens = () => {

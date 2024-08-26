@@ -11,12 +11,12 @@ interface AxiosErrorHandler {
 const slugify = (text: string): string => {
   let result = text.toLowerCase();
 
-  result = result.replace(/(?<id>à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/gu, "a");
-  result = result.replace(/(?<id>è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/gu, "e");
-  result = result.replace(/(?<id>ì|í|ị|ỉ|ĩ)/gu, "i");
-  result = result.replace(/(?<id>ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/gu, "o");
-  result = result.replace(/(?<id>ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/gu, "u");
-  result = result.replace(/(?<id>ỳ|ý|ỵ|ỷ|ỹ)/gu, "y");
+  result = result.replace(/[àáạảãâầấậẩẫăằắặẳẵ]/gu, "a");
+  result = result.replace(/[èéẹẻẽêềếệểễ]/gu, "e");
+  result = result.replace(/[ìíịỉĩ]/gu, "i");
+  result = result.replace(/[òóọỏõôồốộổỗơờớợởỡ]/gu, "o");
+  result = result.replace(/[ùúụủũưừứựửữ]/gu, "u");
+  result = result.replace(/[ỳýỵỷỹ]/gu, "y");
   result = result.replace(/(?<id>đ)/gu, "d");
 
   result = result.replace(/(?<id>[^0-9a-z-\s])/g, "");
@@ -25,12 +25,13 @@ const slugify = (text: string): string => {
 
   result = result.replace(/^-+/g, "");
 
-  result = result.replace(/-+$/g, "");
+  result = result.replace(/^-+$/g, "");
 
   return result;
 };
 
 const beautyPrice = (price: number): string => {
+  // eslint-disable-next-line sonarjs/slow-regex
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
@@ -39,14 +40,13 @@ const normalizePrice = (price: string): number => {
 };
 
 const normalizeRequestConfig = (request: InternalAxiosRequestConfig) => {
-  const { headers, params } = request;
+  const { headers } = request;
+  const params = request.params as Record<string, unknown> | undefined;
 
-  if (headers) {
-    const { accessToken } = authService.getTokens();
+  const { accessToken } = authService.getTokens();
 
-    if (accessToken) {
-      headers.Authorization = `Bearer ${String(accessToken)}`;
-    }
+  if (accessToken) {
+    headers.Authorization = `Bearer ${String(accessToken)}`;
   }
 
   if (params) {
@@ -78,18 +78,15 @@ const normalizeRequestConfig = (request: InternalAxiosRequestConfig) => {
     }
 
     // Remove all empty string from newParams
-    request.params = Object.keys(newParams).reduce(
-      (acc, key) => {
-        const value = newParams[key];
+    request.params = Object.keys(newParams).reduce<Record<string, string>>((acc, key) => {
+      const value = newParams[key];
 
-        if (value !== "") {
-          acc[key] = value;
-        }
+      if (value !== "") {
+        acc[key] = value;
+      }
 
-        return acc;
-      },
-      {} as Record<string, string>,
-    );
+      return acc;
+    }, {});
   }
 
   return request;
@@ -129,7 +126,7 @@ const handleAxiosError = async (
 
         throw error;
       } catch (refreshTokenError) {
-        return onUnauthorized?.(error);
+        return onUnauthorized?.(refreshTokenError);
       }
     }
   }

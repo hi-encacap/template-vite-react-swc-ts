@@ -9,20 +9,20 @@ interface StringParam {
 
 type StringSchemaType<T extends StringParam> = T["required"] extends true
   ? StringSchema<string>
-  : StringSchema<string | undefined>;
+  : StringSchema;
 
 const string = <T extends StringParam>(t: FormatMessage, options: T = {} as T): StringSchemaType<T> => {
   let schema = yupString().typeError(t({ id: "please_enter_the_valid_string_d" }));
 
   if (options.required) {
-    schema = schema.required(t({ id: "please_enter_this_field_d" })) as StringSchema<string>;
+    schema = schema.required(t({ id: "please_enter_this_field_d" }));
   }
 
   return schema as StringSchemaType<T>;
 };
 
 export const number = () => {
-  return yupNumber().transform((value) => (value || value === 0 ? value : undefined));
+  return yupNumber().transform((value: unknown) => (value || value === 0 ? value : undefined));
 };
 
 const getSchema = (t: FormatMessage) => ({
@@ -45,7 +45,7 @@ export const getMessage = (t: FormatMessage) => ({
 export const isValidPhone = (value?: string) => {
   if (!value) return true;
 
-  const phoneRegex = /^(0)((3([2-9]))|(5([25689]))|(7([0|6-9]))|(8([1-9]))|(9([0-9])))([0-9]{7})$/;
+  const phoneRegex = /^(0)((3([2-9]))|(5([25689]))|(7([0|6-9]))|(8([1-9]))|(9(\d)))(\d{7})$/;
 
   return phoneRegex.test(value);
 };

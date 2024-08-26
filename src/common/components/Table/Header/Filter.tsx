@@ -45,8 +45,8 @@ const TableHeaderFilter = ({ column, onChange }: TableHeaderFilterProps) => {
   }, []);
 
   const handleRenderLabel = useCallback<Required<DebounceSelectProps>["labelRender"]>(
-    (props) => {
-      return <TableHeaderFilterLabel title={columnTitle} text={String(props.label)} />;
+    ({ label }) => {
+      return <TableHeaderFilterLabel title={columnTitle} text={String(label)} />;
     },
     [columnTitle],
   );

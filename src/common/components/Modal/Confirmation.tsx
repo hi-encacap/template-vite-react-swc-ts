@@ -21,6 +21,7 @@ const ConfirmationModal = ({
   ...props
 }: ConfirmationModalProps) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [, setConfirmError] = useState<unknown>(null);
 
   const { formatMessage } = useIntl();
 
@@ -31,7 +32,7 @@ const ConfirmationModal = ({
       try {
         await onOk?.(event);
       } catch (error) {
-        //
+        setConfirmError(error);
       } finally {
         setConfirmLoading(false);
       }

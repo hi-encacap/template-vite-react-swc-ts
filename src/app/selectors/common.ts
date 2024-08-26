@@ -17,7 +17,6 @@ export const userRoleSelector = createSelector(userSelector, (user) => {
     return { isAdmin, isUser };
   }
 
-  // eslint-disable-next-line sonarjs/no-small-switch
   switch (user.role) {
     case UserRole.ADMIN:
       isAdmin = true;

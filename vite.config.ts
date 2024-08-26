@@ -6,7 +6,6 @@ import checker from "vite-plugin-checker";
 import webfontDownload from "vite-plugin-webfont-dl";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -16,7 +15,6 @@ export default defineConfig({
       checker({
         typescript: true,
         eslint: {
-          // for example, lint .ts and .tsx
           lintCommand: "eslint --report-unused-disable-directives",
           useFlatConfig: true,
         },

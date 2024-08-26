@@ -13,15 +13,14 @@ interface WithRoleProps {
 type WithRoleComponentType<P = Record<string, string>> = ComponentType<P & WithRoleProps>;
 
 const withRole = <P extends object>(Component: WithRoleComponentType<P>): WithRoleComponentType<P> => {
-  const WithRole: WithRoleComponentType<P> = (props) => {
+  const WithRole: WithRoleComponentType<P> = ({ roles, fallback, ...props }: WithRoleProps) => {
     const user = useSelector(userSelector);
-    const { roles, fallback } = props;
 
     if (!user || !roles.includes(user.role)) {
-      return fallback || null;
+      return fallback ?? null;
     }
 
-    return <Component {...props} />;
+    return <Component fallback={fallback} roles={roles} {...(props as P)} />;
   };
 
   return WithRole;

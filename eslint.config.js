@@ -2,7 +2,7 @@
 
 import { fixupPluginRules } from "@eslint/compat";
 import pluginJs from "@eslint/js";
-import * as pluginReactQuery from "@tanstack/eslint-plugin-query";
+import pluginReactQuery from "@tanstack/eslint-plugin-query";
 import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 import pluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import pluginReact from "eslint-plugin-react";
@@ -12,10 +12,16 @@ import pluginSonarjs from "eslint-plugin-sonarjs";
 import globals from "globals";
 import pluginTs from "typescript-eslint";
 
-export default [
+export default pluginTs.config(
   pluginJs.configs.recommended,
+  ...pluginTs.configs.strictTypeChecked,
+  ...pluginTs.configs.stylisticTypeChecked,
+  ...pluginReactQuery.configs["flat/recommended"],
+  pluginPrettierRecommended,
   {
     files: ["src/**/*.ts", "src/**/*.tsx"],
+  },
+  {
     languageOptions: {
       globals: globals.browser,
       parserOptions: {
@@ -27,21 +33,26 @@ export default [
         },
       },
     },
+
     plugins: {
       react: fixupPluginRules(pluginReact),
       "react-hooks": fixupPluginRules(pluginReactHook),
-      "@tanstack/query": fixupPluginRules(pluginReactQuery),
       "react-refresh": pluginReactRefresh,
       "jsx-a11y": pluginJsxA11y,
+      sonarjs: pluginSonarjs,
     },
+
     rules: {
       ...pluginReact.configs.recommended.rules,
       ...pluginReact.configs["jsx-runtime"].rules,
       ...pluginJsxA11y.configs.recommended.rules,
       ...pluginReactHook.configs.recommended.rules,
-      ...pluginReactQuery.configs.recommended.rules,
-      "react/prop-types": "off",
+      ...pluginSonarjs.configs.recommended.rules,
+
+      // TODO: Remove this rule when it's fixed. (https://sonarsource.atlassian.net/browse/JS-296)
+      "sonarjs/sonar-no-fallthrough": "off",
     },
+
     settings: {
       react: {
         version: "detect",
@@ -51,7 +62,4 @@ export default [
   {
     ignores: ["node_modules/*", "*.config.*", "dist/*", "*.cjs", "*.prepare.*"],
   },
-  ...pluginTs.configs.recommended,
-  pluginSonarjs.configs.recommended,
-  pluginPrettierRecommended,
-];
+);
